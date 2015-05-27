@@ -1,21 +1,12 @@
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath 'com.android.tools.build:gradle:1.0.1'
-  }
-}
-
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 21
+  compileSdkVersion project.androidCompileSdkVersion
   buildToolsVersion project.androidBuildToolsVersion
 
   defaultConfig {
     minSdkVersion 14
-    targetSdkVersion 21
+    targetSdkVersion project.androidTargetSdkVersion
     versionCode 2
     versionName "1.0"
   }

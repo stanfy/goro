@@ -1,8 +1,38 @@
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.library'
+apply plugin: 'org.robolectric'
+apply plugin: 'maven'
+
 group = 'com.stanfy.enroscar'
 version = '2.0.1-SNAPSHOT'
 archivesBaseName = 'enroscar-goro'
 
-// POM file modifications
+android {
+  compileSdkVersion project.androidCompileSdkVersion
+  buildToolsVersion project.androidBuildToolsVersion
+
+  defaultConfig {
+    minSdkVersion 8
+    targetSdkVersion project.androidTargetSdkVersion
+    consumerProguardFiles file("config/consumer.pro")
+    versionName project.version
+  }
+}
+
+dependencies {
+  compile 'com.stanfy.enroscar:enroscar-async:2.0-RC1' // TODO: It should be in provided.
+  provided 'io.reactivex:rxjava:1.0.11'
+
+  testCompile 'junit:junit:4.12'
+  testCompile 'org.mockito:mockito-all:1.9.5'
+  testCompile 'com.squareup:fest-android:1.0.8@aar'
+  testCompile 'org.easytesting:fest-assert-core:2.0M10'
+  testCompile 'org.robolectric:robolectric:2.4'
+//  androidTestCompile project(":content")
+  androidTestCompile 'io.reactivex:rxjava:1.0.11'
+}
+
+// POM file modifications (TODO)
 uploadArchives {
   repositories {
     mavenDeployer {
@@ -11,21 +41,5 @@ uploadArchives {
         description 'Android laibrary for handling tasks in multiple queues'
       }
     }
-  }
-}
-apply from: file("$rootDir/gradle/jar.gradle")
-
-dependencies {
-  provided project(":async")
-  provided 'io.reactivex:rxjava:1.0.11'
-
-  androidTestCompile project(":content")
-  androidTestCompile 'io.reactivex:rxjava:1.0.11'
-}
-
-android {
-  defaultConfig {
-    consumerProguardFiles file("config/consumer.pro")
-    versionName project.version
   }
 }

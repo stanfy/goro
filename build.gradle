@@ -1,1 +1,25 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:1.2.2'
+    classpath 'org.robolectric:robolectric-gradle-plugin:1.0.0'
+    classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+    classpath 'com.stanfy.android:gradle-android-apt:1.0.0'
+  }
+}
+
+ext {
+  androidCompileSdkVersion = 22
+  androidBuildToolsVersion = '22.0.1'
+  androidTargetSdkVersion = 22
+}
+
+subprojects {
+  repositories {
+    mavenCentral()
+  }
+}
+
 // TODO
