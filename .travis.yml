@@ -30,6 +30,6 @@ script:
   # JavaVM tests
   - ./gradlew --continue check
   # Android tests
-  - android-wait-for-emulator || exit 1
-  - adb shell input keyevent 82 &
-  - ./gradlew :goro:conCheck
+  # - android-wait-for-emulator || exit 1
+  # - adb shell input keyevent 82 &
+  # - ./gradlew :goro:conCheck

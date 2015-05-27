@@ -23,11 +23,19 @@ dependencies {
   compile 'com.stanfy.enroscar:enroscar-async:2.0-RC1' // TODO: It should be in provided.
   provided 'io.reactivex:rxjava:1.0.11'
 
-  testCompile 'junit:junit:4.12'
-  testCompile 'org.mockito:mockito-all:1.9.5'
-  testCompile 'com.squareup:fest-android:1.0.8@aar'
-  testCompile 'org.easytesting:fest-assert-core:2.0M10'
+  def testDeps = [
+    'junit:junit:4.12',
+    'org.mockito:mockito-all:1.9.5',
+    'com.squareup:fest-android:1.0.8@aar',
+    'org.easytesting:fest-assert-core:2.0M10'
+  ]
+
+  testCompile testDeps
   testCompile 'org.robolectric:robolectric:2.4'
+  androidTestCompile testDeps
+  androidTestCompile 'com.jakewharton.espresso:espresso:1.1-r3', {
+    exclude group: 'org.hamcrest'
+  }
 //  androidTestCompile project(":content")
   androidTestCompile 'io.reactivex:rxjava:1.0.11'
 }
