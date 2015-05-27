@@ -1,15 +1,14 @@
+group = 'com.stanfy.enroscar'
 version = '2.0.1-SNAPSHOT'
-ext {
-  latestStableVersion = '2.0.0'
-}
+archivesBaseName = 'enroscar-goro'
 
 // POM file modifications
 uploadArchives {
   repositories {
     mavenDeployer {
       pom.project {
-        name 'Enroscar Goro'
-        description 'Android service that handles tasks in multiple queues'
+        name 'Goro'
+        description 'Android laibrary for handling tasks in multiple queues'
       }
     }
   }
