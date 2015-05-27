@@ -1,0 +1,35 @@
+language: android
+
+android:
+  components:
+    - build-tools-22.0.1
+    - android-22
+    - android-10
+    - extra-android-m2repository
+    - sys-img-armeabi-v7a-android-22
+    - sys-img-armeabi-android-10
+  licenses:
+    - 'android-sdk-license-.+'
+
+env:
+  matrix:
+    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
+
+before_install:
+  - export TERM=dumb
+
+  # Create and run emulator
+  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI || exit 1
+  - emulator -avd test -no-skin -no-audio -no-window &
+
+install:
+  - ./gradlew clean assemble
+
+script:
+  # JavaVM tests
+  - ./gradlew --continue check
+  # Android tests
+  - android-wait-for-emulator || exit 1
+  - adb shell input keyevent 82 &
+  - ./gradlew :goro:conCheck
