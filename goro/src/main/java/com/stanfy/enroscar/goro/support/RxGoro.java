@@ -21,6 +21,9 @@ public class RxGoro {
     this.goro = goro;
   }
 
+  /** @return wrapped {@link Goro} instance */
+  public Goro wrappedGoro() { return goro; }
+
   /**
    * @see {@link Goro#schedule(Callable)}
    */
