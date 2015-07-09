@@ -7,6 +7,7 @@ buildscript {
     classpath 'org.robolectric:robolectric-gradle-plugin:1.0.0'
     classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
     classpath 'com.stanfy.android:gradle-android-apt:1.0.0'
+    classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
   }
 }
 

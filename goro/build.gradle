@@ -2,6 +2,7 @@ apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.library'
 apply plugin: 'org.robolectric'
 apply plugin: 'maven'
+apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.stanfy.enroscar'
 version = '2.0.1-SNAPSHOT'
