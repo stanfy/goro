@@ -1,8 +1,9 @@
 package com.stanfy.enroscar.goro.sample.tape;
 
+import android.content.Context;
+
 import com.stanfy.enroscar.goro.BoundGoro;
 import com.stanfy.enroscar.goro.Goro;
-import com.stanfy.enroscar.goro.support.AsyncGoro;
 
 import javax.inject.Singleton;
 
@@ -16,15 +17,15 @@ import dagger.Provides;
 )
 class SampleActivityModule {
 
-  private final BoundGoro goro;
+  private final Context context;
 
   SampleActivityModule(final SampleActivity activity) {
-    this.goro = Goro.bindWith(activity);
+    this.context = activity;
   }
 
   @Provides @Singleton
   BoundGoro boundGoro() {
-    return goro;
+    return Goro.bindAndAutoReconnectWith(context);
   }
 
 }
