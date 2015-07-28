@@ -63,15 +63,18 @@ public abstract class Goro {
    *   </pre>
    * </p>
    * @param context context that will bind to the service
-   * @return Goro implementation that binds to {@link com.stanfy.enroscar.goro.GoroService}.
+   * @return Goro implementation that binds to {@link GoroService}.
    * @see #bindWith(Context, BoundGoro.OnUnexpectedDisconnection)
    */
   public static BoundGoro bindAndAutoReconnectWith(final Context context) {
+    if (context == null) {
+      throw new IllegalArgumentException("Context cannot be null");
+    }
     return new BoundGoroImpl(context, null);
   }
 
   /**
-   * Creates a Goro implementation that binds to {@link com.stanfy.enroscar.goro.GoroService}
+   * Creates a Goro implementation that binds to {@link GoroService}
    * in order to run scheduled tasks in service context.
    * {@code BoundGoro} exposes {@code bind()} and {@code unbind()} methods that you can use to connect to
    * and disconnect from the worker service in other component lifecycle callbacks
@@ -84,13 +87,30 @@ public abstract class Goro {
    * </p>
    * @param context context that will bind to the service
    * @param handler callback to invoke if worker service is unexpectedly stopped by the system server
-   * @return Goro implementation that binds to {@link com.stanfy.enroscar.goro.GoroService}.
+   * @return Goro implementation that binds to {@link GoroService}.
    */
   public static BoundGoro bindWith(final Context context, final BoundGoro.OnUnexpectedDisconnection handler) {
+    if (context == null) {
+      throw new IllegalArgumentException("Context cannot be null");
+    }
     if (handler == null) {
       throw new IllegalArgumentException("Disconnection handler cannot be null");
     }
     return new BoundGoroImpl(context, handler);
+  }
+
+  /**
+   * Creates a Goro implementation that binds to a worker service to schedule tasks.
+   * This implementation binds to the backing service when one of {@code Goro} methods is invoked,
+   * then delegates all the tasks to the service and unbinds asap.
+   * @param context context that will bind to the service
+   * @return Goro implementation that binds to {@link GoroService}
+   */
+  public static Goro bindOnDemandWith(final Context context) {
+    if (context == null) {
+      throw new IllegalArgumentException("Context cannot be null");
+    }
+    return new OnDemandBindingGoro(context);
   }
 
   /**
@@ -168,7 +188,7 @@ public abstract class Goro {
 
     @Override
     public void removeTaskListener(final GoroListener listener) {
-      listenersHandler.removeTaskListener(listener);
+      listenersHandler.removeTaskListenerOrThrow(listener);
     }
 
     @Override
