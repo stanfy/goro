@@ -1,3 +1,5 @@
+rootProject.name = 'goro-root'
+
 include ':goro'
 include ':sample'
 include ':tape-sample'

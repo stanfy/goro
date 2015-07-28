@@ -2,34 +2,40 @@ language: android
 
 android:
   components:
-    - build-tools-22.0.1
-    - android-22
-    - android-10
-    - extra-android-m2repository
-    - sys-img-armeabi-v7a-android-22
-    - sys-img-armeabi-android-10
-  licenses:
-    - 'android-sdk-license-.+'
+  - build-tools-22.0.1
+  - android-22
+  - extra-android-m2repository
+  - sys-img-armeabi-android-10
 
-env:
-  matrix:
-    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
-
-before_install:
-  - export TERM=dumb
-
-  # Create and run emulator
-  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI || exit 1
-  - emulator -avd test -no-skin -no-audio -no-window &
+jdk:
+  - oraclejdk8
 
 install:
   - ./gradlew clean assemble
 
+before_script:
+  - echo no | android create avd --force -n test -t android-10 --abi armeabi
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82
+
 script:
-  # JavaVM tests
   - ./gradlew --continue check
-  # Android tests
-  # - android-wait-for-emulator || exit 1
-  # - adb shell input keyevent 82 &
-  # - ./gradlew :goro:conCheck
+  - ./gradlew conCheck
+
+after_success:
+  - gradle/deploy_snapshot.sh
+
+notifications:
+  email: false
+
+sudo: false
+
+cache:
+  directories:
+  - "$HOME/.gradle"
+
+env:
+  global:
+  - secure: ILt85+jQxaE9jWm3rl9+0bu2axI0qccbeN+Qx9ZXTNNlGL7wfUw8Trw5VpYhSWyv/jLZwTEnPuTHtZHW3+O3lzsObYxm8+cpqwFX9e9En79JvzKj92VF9FJjeajHk59jHBiG7DpQZ5hnIo6HxpT0f+lxFRpgZ/6s2KrsNJgmMOU1sBLByCowjzsKtR/z0+LqCOLdNE+U20oR8Lj9pX1vVtGuGYOeL4F9VusiZ1jHtBZ46Pa6AgAJ2mNgOJq8VXgfK0F5Amxz+6SvKXBTkA8AHXEyuDo3oLB2aLcU0SBW2OZAkpu9xLnCFZhd7cNHeeCiQT501dxRjcw0p9gE6NMnVV3dTXoXq+8BXbfQQFJDnYOuL8cbUqqs86p3dcBq4y2N7DaOGY0S/C84bYI9nCt1EeC0R53Ex8toHP09z8sPotcDfxgvrPDD/oQisiV8ffI+20Xxb4tyVPpiljbOlDNiVpg9S3DsSC1mi6USIvF0keCZNMv6GYCICarTbDObmOSE6J8wnHw23aKG/g8yE2uYH+zcduIx3nrgeXWLcIdw79EfLuyLgofXzI61L3jj/agUymuqZ6Q0Hnb6UCntrggpmOduPlacU0wCzC2hH3PRig52G9KPKo/WM+JWroXDdcIagouDIIirXXgjxvY2Of/hrrWrUzv28XeyAPsnWkyYuyw=
+  - secure: XLwfO6P16BwiUNzZ5k8Q8TaRuJWKyGQQ007Fg3ZVRaz8yO1zw8eoazvyEUIE/qD3LATpqOEVo9XdAco4qp8986OIWjPcS54vBGCnLsa2D54V6WTOJo1nngDFGMgyz1jr0lGFISto59ELRfAClaF5u0FPQE4c2F2AE/pvKVveshNRnzuGGd8POo/gsyMuk/SlYzD/kqgM59xKRX9shmKaSx+jQuJUejW378YuuvjauKnFQbRUbxNUq5Wjdsq2Pb9ZN8ZAiVsIx+55tkKteXRWeD87EowHFwTxfSfXtpXAmUiQeC6cG7jecXQIVl5FbcDtrup3T9VlCRsvjiNCH7TBXz3sAvm6hqm4KcctrasIQvEvx4TT1pVuugB1SjereM1PT/+t/iqwpmsRhV0yAY8WMM09HylmQAoXYrhE5s20Y5Sd3OE3gL6zfDhTEJEhekZh2Q6Cfp3TBXJGYlD14ozGY3uZI/nBxjm72Nsa52kaLS4VX44zX/BTW3ya5P2iWfO+boLQ91i2rnrVbh4fMiLGD6jmLFQmiomdqK2gsXX0L0kdeGbMn66chDtDhi8bFoO/HqHb0ab18j6akIlwkGsiBi4483fue2rAz+pVf0/xXPHF+3zayMSjYfLSyZokUqAmtEZuHSF+zeM4DFYAAerQ0mblk4KvYVyNGOR8GJRNtJY=
