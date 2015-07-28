@@ -52,11 +52,45 @@ public abstract class Goro {
   /**
    * Creates a Goro implementation that binds to {@link com.stanfy.enroscar.goro.GoroService}
    * in order to run scheduled tasks in service context.
+   * <p>
+   *   This method is functionally identical to
+   *   <pre>
+   *     BoundGoro goro = Goro.bindWith(context, new BoundGoro.OnUnexpectedDisconnection() {
+   *       public void onServiceDisconnected(BoundGoro goro) {
+   *         goro.bind();
+   *       }
+   *     });
+   *   </pre>
+   * </p>
    * @param context context that will bind to the service
    * @return Goro implementation that binds to {@link com.stanfy.enroscar.goro.GoroService}.
+   * @see #bindWith(Context, BoundGoro.OnUnexpectedDisconnection)
    */
-  public static BoundGoro bindWith(final Context context) {
-    return new BoundGoroImpl(context);
+  public static BoundGoro bindAndAutoReconnectWith(final Context context) {
+    return new BoundGoroImpl(context, null);
+  }
+
+  /**
+   * Creates a Goro implementation that binds to {@link com.stanfy.enroscar.goro.GoroService}
+   * in order to run scheduled tasks in service context.
+   * {@code BoundGoro} exposes {@code bind()} and {@code unbind()} methods that you can use to connect to
+   * and disconnect from the worker service in other component lifecycle callbacks
+   * (like {@code onStart}/{@code onStop} in {@code Activity} or {@code onCreate}/{@code onDestory} in {@code Service}).
+   * <p>
+   *   The worker service ({@code GoroService}) normally stops when all {@code BoundGoro} instances unbind
+   *   and all the pending tasks in {@code Goro} queues are handled.
+   *   But it can also be stopped by the system server (due to a user action in Settings app or application update).
+   *   In this case {@code BoundGoro} created with this method will notify the supplied handler about the event.
+   * </p>
+   * @param context context that will bind to the service
+   * @param handler callback to invoke if worker service is unexpectedly stopped by the system server
+   * @return Goro implementation that binds to {@link com.stanfy.enroscar.goro.GoroService}.
+   */
+  public static BoundGoro bindWith(final Context context, final BoundGoro.OnUnexpectedDisconnection handler) {
+    if (handler == null) {
+      throw new IllegalArgumentException("Disconnection handler cannot be null");
+    }
+    return new BoundGoroImpl(context, handler);
   }
 
   /**

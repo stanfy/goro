@@ -46,11 +46,14 @@ public class BoundGoroTest {
   private ComponentName serviceCompName;
   private TestingQueues testingQueues;
 
+  private BoundGoro.OnUnexpectedDisconnection disconnection;
+
   @Before
   public void create() {
     context = Robolectric.setupActivity(Activity.class);
     shadowContext = Shadows.shadowOf(context);
-    goro = Goro.bindWith(context);
+    disconnection = mock(BoundGoro.OnUnexpectedDisconnection.class);
+    goro = Goro.bindWith(context, disconnection);
     goro = spy(goro);
 
     testingQueues = new TestingQueues();
@@ -298,6 +301,24 @@ public class BoundGoroTest {
     order.verify(serviceInstance).schedule("clearedQueue", task1);
     order.verify(serviceInstance).clear("clearedQueue");
     order.verify(serviceInstance).schedule("clearedQueue", task2);
+  }
+
+  @Test
+  public void disconnectionHandlerIsInvoked() {
+    goro.bind();
+    assertBinding();
+    goro.onServiceDisconnected(new ComponentName("test", "test"));
+    verify(disconnection).onServiceDisconnected(goro);
+  }
+
+  @Test
+  public void autoReconnection() {
+    goro = spy(Goro.bindAndAutoReconnectWith(context));
+    goro.bind();
+    assertBinding();
+    reset(goro);
+    goro.onServiceDisconnected(new ComponentName("test", "test"));
+    assertBinding();
   }
 
 }

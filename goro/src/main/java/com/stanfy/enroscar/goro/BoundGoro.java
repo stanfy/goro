@@ -28,8 +28,10 @@ public abstract class BoundGoro extends Goro implements ServiceConnection {
   /** Unbind from {@link com.stanfy.enroscar.goro.GoroService}. */
   public abstract void unbind();
 
-  /** Bind to {@link com.stanfy.enroscar.goro.GoroService} and unbind as soon as tasks are delegated. */
-  public abstract void bindOneshot();
+  /** A callback invoked when worker service is stopped from outside. */
+  public interface OnUnexpectedDisconnection {
+    void onServiceDisconnected(BoundGoro goro);
+  }
 
   /** Implementation. */
   static class BoundGoroImpl extends BoundGoro implements ServiceConnection {
@@ -46,41 +48,28 @@ public abstract class BoundGoro extends Goro implements ServiceConnection {
     /** Protects service instance. */
     private final Object lock = new Object();
 
+    /** Disconnection handler. */
+    private final OnUnexpectedDisconnection disconnectionHandler;
+
     /** Instance from service. */
     private Goro service;
 
-    /** Oneshot binding flag. */
-    private boolean oneshot;
-
-    BoundGoroImpl(final Context context) {
+    BoundGoroImpl(final Context context, final OnUnexpectedDisconnection disconnectionHandler) {
       this.context = context;
+      this.disconnectionHandler = disconnectionHandler;
     }
 
     @Override
     public void bind() {
-      synchronized (lock) {
-        oneshot = false;
-      }
       GoroService.bind(context, this);
     }
 
     @Override
     public void unbind() {
       synchronized (lock) {
-        if (oneshot) {
-          throw new IllegalStateException("bindOneshot() was already called. "
-              + "You must call bind() to be able to call unbind()");
-        }
-        doUnbindLocked();
+        service = null;
+        GoroService.unbind(context, this);
       }
-    }
-
-    @Override
-    public void bindOneshot() {
-      synchronized (lock) {
-        oneshot = true;
-      }
-      GoroService.bind(context, this);
     }
 
     @Override
@@ -106,16 +95,7 @@ public abstract class BoundGoro extends Goro implements ServiceConnection {
           }
           postponed.clear();
         }
-
-        if (oneshot) {
-          doUnbindLocked();
-        }
       }
-    }
-
-    private void doUnbindLocked() {
-      service = null;
-      GoroService.unbind(context, this);
     }
 
     Goro getServiceObject() {
@@ -132,7 +112,17 @@ public abstract class BoundGoro extends Goro implements ServiceConnection {
     public void onServiceDisconnected(final ComponentName name) {
       synchronized (lock) {
         if (service != null) {
-          throw new GoroException("GoroService disconnected while we are using it");
+          /*
+            It's the case when service was stopped by a system server.
+            It can happen when user presses a stop button in application settings (in running apps section).
+            Sometimes this happens on application update.
+           */
+          service = null;
+          if (disconnectionHandler == null) {
+            bind();
+          } else {
+            disconnectionHandler.onServiceDisconnected(this);
+          }
         }
       }
     }

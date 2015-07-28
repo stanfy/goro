@@ -34,7 +34,7 @@ public class GoroActivity extends Activity {
   private int counter = 1;
 
   /** Goro instance. */
-  private final BoundGoro goro = Goro.bindWith(this);
+  private final BoundGoro goro = Goro.bindAndAutoReconnectWith(this);
 
   private GoroStateObserver observer;
 
