@@ -10,23 +10,21 @@ import android.os.Parcelable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.concurrent.Callable;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.fail;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Mockito.*;
+import static org.robolectric.RuntimeEnvironment.application;
 
 /**
  * Tests for GoroService.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = Build.VERSION_CODES.JELLY_BEAN_MR2)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
 public class GoroServiceTest {
 
   /** Queues. */
@@ -73,7 +71,7 @@ public class GoroServiceTest {
 
   @Test
   public void shouldScheduleTasksCreatedWithFactoryMethod() {
-    service.onStartCommand(GoroService.taskIntent(Robolectric.application, task), 0, 1);
+    service.onStartCommand(GoroService.taskIntent(application, task), 0, 1);
     queues.executeAll();
     assertThat(executed).isTrue();
   }
@@ -92,7 +90,7 @@ public class GoroServiceTest {
   @Test
   public void serviceContextShouldBeInjected() {
     Task task = mock(Task.class);
-    service.onStartCommand(GoroService.taskIntent(Robolectric.application, task), 0, 1);
+    service.onStartCommand(GoroService.taskIntent(application, task), 0, 1);
     verify(task).injectServiceContext(service);
   }
 
@@ -101,7 +99,7 @@ public class GoroServiceTest {
     Task task = mock(Task.class);
     Exception e = new Exception();
     doThrow(e).when(task).call();
-    service.onStartCommand(GoroService.taskIntent(Robolectric.application, task), 0, 1);
+    service.onStartCommand(GoroService.taskIntent(application, task), 0, 1);
     try {
       queues.executeAll();
       fail("Error was not rethrown");
@@ -115,7 +113,7 @@ public class GoroServiceTest {
     Task task = mock(Task.class);
     Exception e = new Exception();
     doThrow(e).when(task).call();
-    Intent intent = GoroService.taskIntent(Robolectric.application, task)
+    Intent intent = GoroService.taskIntent(application, task)
         .putExtra(GoroService.EXTRA_IGNORE_ERROR, true);
     service.onStartCommand(intent, 0, 1);
     queues.executeAll(); // and nothing happens

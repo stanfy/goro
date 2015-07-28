@@ -2,12 +2,13 @@ package com.stanfy.enroscar.goro;
 
 import android.os.Build;
 
+import com.stanfy.enroscar.goro.Goro.GoroImpl;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.concurrent.Callable;
@@ -15,16 +16,14 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-
-import com.stanfy.enroscar.goro.Goro.GoroImpl;
 
 /**
  * Tests for {@link com.stanfy.enroscar.goro.Goro.GoroImpl}.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = Build.VERSION_CODES.JELLY_BEAN_MR2)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
 public class GoroImplTest {
 
   /** Goro instance. */

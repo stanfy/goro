@@ -11,7 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
 
@@ -21,15 +22,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.fest.assertions.api.ANDROID.assertThat;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
  * Tests for BoundGoro.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = Build.VERSION_CODES.JELLY_BEAN_MR2)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
 public class BoundGoroTest {
 
   /** Implementation. */
@@ -48,7 +49,7 @@ public class BoundGoroTest {
   @Before
   public void create() {
     context = Robolectric.setupActivity(Activity.class);
-    shadowContext = Robolectric.shadowOf(context);
+    shadowContext = Shadows.shadowOf(context);
     goro = Goro.bindWith(context);
     goro = spy(goro);
 

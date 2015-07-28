@@ -12,41 +12,68 @@ android {
   buildToolsVersion project.androidBuildToolsVersion
 
   defaultConfig {
-    minSdkVersion 8
-    targetSdkVersion project.androidTargetSdkVersion
     consumerProguardFiles file("config/consumer.pro")
     versionName project.version
   }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
+  }
+}
+
+repositories {
+  maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
-  compile 'com.stanfy.enroscar:enroscar-async:2.0-RC1' // TODO: It should be in provided.
-  provided 'io.reactivex:rxjava:1.0.11'
+  provided 'com.stanfy.enroscar:enroscar-async-interface:2.0-RC2-SNAPSHOT'
+  provided 'io.reactivex:rxjava:1.0.13'
 
   def testDeps = [
-    'junit:junit:4.12',
     'org.mockito:mockito-all:1.9.5',
-    'com.squareup:fest-android:1.0.8@aar',
-    'org.easytesting:fest-assert-core:2.0M10'
+    'org.assertj:assertj-core:1.7.1',
+    'com.squareup.assertj:assertj-android:1.0.1'
   ]
 
+  testCompile 'junit:junit:4.12'
   testCompile testDeps
-  testCompile 'org.robolectric:robolectric:2.4'
+  testCompile 'org.robolectric:robolectric:3.0'
+
   androidTestCompile testDeps
-  androidTestCompile 'com.jakewharton.espresso:espresso:1.1-r3', {
-    exclude group: 'org.hamcrest'
-  }
-//  androidTestCompile project(":content")
-  androidTestCompile 'io.reactivex:rxjava:1.0.11'
+  androidTestCompile 'io.reactivex:rxjava:1.0.13'
 }
 
-// POM file modifications (TODO)
+// POM file modifications
 uploadArchives {
   repositories {
     mavenDeployer {
       pom.project {
         name 'Goro'
         description 'Android laibrary for handling tasks in multiple queues'
+        url 'https://github.com/stanfy/goro'
+        inceptionYear '2013'
+
+        scm {
+          url 'https://github.com/stanfy/goro'
+          connection 'scm:git:git@github.com:stanfy/goro.git'
+          developerConnection 'scm:git:git@github.com:stanfy/goro.git'
+        }
+
+        licenses {
+          license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+          }
+        }
+
+        developers {
+          developer {
+            id 'rmazur'
+            name 'Roman Mazur'
+          }
+        }
       }
     }
   }

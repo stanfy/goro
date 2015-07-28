@@ -17,7 +17,7 @@ import java.util.concurrent.TimeoutException;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test oneshot Goro usage.

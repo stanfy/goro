@@ -4,13 +4,14 @@ import android.os.Build;
 
 import com.stanfy.enroscar.async.Async;
 import com.stanfy.enroscar.async.AsyncObserver;
+import com.stanfy.enroscar.goro.BuildConfig;
 import com.stanfy.enroscar.goro.Goro;
 import com.stanfy.enroscar.goro.ObservableFuture;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.concurrent.Callable;
@@ -22,8 +23,8 @@ import static org.mockito.Mockito.*;
 /**
  * Tests for AsyncGoro.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = Build.VERSION_CODES.JELLY_BEAN_MR2)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
 public class AsyncGoroTest {
 
   /** Mock Goro instance. */
