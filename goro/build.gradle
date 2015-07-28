@@ -12,6 +12,7 @@ android {
   buildToolsVersion project.androidBuildToolsVersion
 
   defaultConfig {
+    minSdkVersion 8
     consumerProguardFiles file("config/consumer.pro")
     versionName project.version
   }
@@ -19,6 +20,12 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_7
     targetCompatibility JavaVersion.VERSION_1_7
+  }
+
+  packagingOptions {
+    exclude 'LICENSE'
+    exclude 'NOTICE'
+    exclude 'asm-license.txt'
   }
 }
 
@@ -42,6 +49,9 @@ dependencies {
 
   androidTestCompile testDeps
   androidTestCompile 'io.reactivex:rxjava:1.0.13'
+  androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2', {
+    exclude group: 'org.hamcrest'
+  }
 }
 
 // POM file modifications

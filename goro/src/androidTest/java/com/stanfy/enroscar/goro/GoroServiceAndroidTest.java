@@ -4,10 +4,9 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.test.espresso.base.MainThread;
 import android.test.ServiceTestCase;
 import android.util.Log;
-
-import com.google.android.apps.common.testing.ui.espresso.base.MainThread;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
