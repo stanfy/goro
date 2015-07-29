@@ -1,6 +1,7 @@
 apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
+apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.stanfy.enroscar'
 version = '3.0.0-SNAPSHOT'

@@ -4,3 +4,9 @@ local.properties
 # Gradle
 build
 .gradle
+
+# Android Studio
+.idea/*
+**/*/.idea
+!.idea/codeStyleSettings.xml
+*.iml
