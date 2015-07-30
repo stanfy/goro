@@ -33,14 +33,18 @@ class BaseListenersHandler {
     taskListeners.add(listener);
   }
 
-  public void removeTaskListener(final GoroListener listener) {
+  public void removeTaskListenerOrThrow(final GoroListener listener) {
+    if (!removeTaskListener(listener)) {
+      throw new GoroException("Listener " + listener + " is not registered");
+    }
+  }
+
+  public boolean removeTaskListener(final GoroListener listener) {
     if (listener == null) {
       throw new IllegalArgumentException("Listener cannot be null");
     }
     checkThread();
-    if (!taskListeners.remove(listener)) {
-      throw new GoroException("Listener " + listener + " is not registered");
-    }
+    return taskListeners.remove(listener);
   }
 
 }

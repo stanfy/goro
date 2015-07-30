@@ -12,9 +12,6 @@ import java.util.concurrent.FutureTask;
 /**
  * Future implementation.
  */
-/*
-  TODO: Rx support?
- */
 final class GoroFuture<T> extends FutureTask<T> implements ObservableFuture<T> {
 
   /** Immediate executor. */
