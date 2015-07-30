@@ -25,14 +25,14 @@ public class RxGoro {
   public Goro wrappedGoro() { return goro; }
 
   /**
-   * @see {@link Goro#schedule(Callable)}
+   * @see Goro#schedule(Callable)
    */
   public <T> Observable<T> schedule(final Callable<T> task) {
     return schedule(Goro.DEFAULT_QUEUE, task);
   }
 
   /**
-   * @see {@link Goro#schedule(String, Callable)}
+   * @see Goro#schedule(String, Callable)
    */
   public <T> Observable<T> schedule(final String queue, final Callable<T> task) {
     return Observable.create(new Observable.OnSubscribe<T>() {

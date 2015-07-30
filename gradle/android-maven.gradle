@@ -1,0 +1,78 @@
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+archivesBaseName = "enroscar-${project.name}"
+
+boolean snapshot = "$project.version".contains("SNAPSHOT")
+boolean hasCredentials = hasProperty('nexusUsername') && hasProperty('nexusPassword')
+
+def RELEASES_REPO_URL = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+def SNAPSHOTS_REPO_URL = "https://oss.sonatype.org/content/repositories/snapshots/"
+
+signing {
+  required { !snapshot && gradle.taskGraph.hasTask("uploadArchives") }
+  sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: RELEASES_REPO_URL) {
+        if (hasCredentials) {
+          authentication(userName: nexusUsername, password: nexusPassword)
+        }
+      }
+      snapshotRepository(url: SNAPSHOTS_REPO_URL) {
+        if (hasCredentials) {
+          authentication(userName: nexusUsername, password: nexusPassword)
+        }
+      }
+
+      pom.project {
+        //project.commonPomPart()
+      }
+    }
+  }
+}
+
+task installArchives(type: Upload) {
+  description "Installs the artifacts to the local Maven repository."
+  configuration = configurations['archives']
+  repositories {
+    mavenDeployer {
+      repository url: "file://${System.properties['user.home']}/.m2/repository"
+    }
+  }
+}
+
+task androidJavadocs(type: Javadoc) {
+  source = android.sourceSets.main.java.srcDirs
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+  classifier = 'javadoc'
+  from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+  classifier = 'sources'
+  from android.sourceSets.main.java.sourceFiles
+}
+
+artifacts {
+  archives androidSourcesJar
+  archives androidJavadocsJar
+}
+
+afterEvaluate {
+  def defaultVariant = android.libraryVariants.find({ it.name.equals(android.defaultPublishConfig) })
+
+  androidJavadocs.classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+  androidJavadocs.classpath += fileTree(dir: "$project.buildDir/intermediates/exploded-aar/", include: "**/classes.jar")
+  androidJavadocs.classpath += defaultVariant.javaCompile.classpath
+  androidJavadocs.source += files("$project.buildDir/generated/source/r/${defaultVariant.dirName}/")
+  androidJavadocs.dependsOn defaultVariant.javaCompile
+}

@@ -54,14 +54,14 @@ public abstract class Goro {
    * in order to run scheduled tasks in service context.
    * <p>
    *   This method is functionally identical to
-   *   <pre>
-   *     BoundGoro goro = Goro.bindWith(context, new BoundGoro.OnUnexpectedDisconnection() {
-   *       public void onServiceDisconnected(BoundGoro goro) {
-   *         goro.bind();
-   *       }
-   *     });
-   *   </pre>
    * </p>
+   * <pre>
+   *   BoundGoro goro = Goro.bindWith(context, new BoundGoro.OnUnexpectedDisconnection() {
+   *     public void onServiceDisconnected(BoundGoro goro) {
+   *       goro.bind();
+   *     }
+   *   });
+   * </pre>
    * @param context context that will bind to the service
    * @return Goro implementation that binds to {@link com.stanfy.enroscar.goro.GoroService}.
    * @see #bindWith(Context, BoundGoro.OnUnexpectedDisconnection)
