@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 
 import com.squareup.tape.FileObjectQueue;
 import com.squareup.tape.TaskQueue;
+import com.stanfy.enroscar.goro.Goro;
 import com.stanfy.enroscar.goro.sample.tape.tasks.ConnectivityReceiver;
 import com.stanfy.enroscar.goro.sample.tape.tasks.TransactionTask;
 
@@ -16,7 +17,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module(
-    injects = {ConnectivityReceiver.class},
+    injects = {ConnectivityReceiver.class, SampleApplication.class},
     library = true
 )
 public final class AppModule {
@@ -42,6 +43,11 @@ public final class AppModule {
     } catch (IOException e) {
       throw new AssertionError(e);
     }
+  }
+
+  @Provides @Singleton
+  public Goro goro() {
+    return Goro.create();
   }
 
   @Provides

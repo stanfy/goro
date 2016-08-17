@@ -1,3 +1,9 @@
+Version 3.0.0
+=============
+- New service-related Goro implementations: `Goro.bindAndAutoReconnectWith`,
+  `Goro.bindOnDemandWith`.
+- `Goro` instance used by `GoroService` must be explicitly provided via `GoroService.setup()`.
+
 Version 2.0.0
 =============
 - Returned `Future` is an observable future allowing listening to task execution result/error:

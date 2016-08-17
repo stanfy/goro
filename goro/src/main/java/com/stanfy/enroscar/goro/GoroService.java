@@ -1,6 +1,7 @@
 package com.stanfy.enroscar.goro;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -14,10 +15,9 @@ import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
 
-import static com.stanfy.enroscar.goro.Goro.create;
-import static com.stanfy.enroscar.goro.Goro.createWithDelegate;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+import static android.content.pm.PackageManager.DONT_KILL_APP;
 
 /**
  * Service that handles tasks in multiple queues.
@@ -55,8 +55,8 @@ public class GoroService extends Service {
   static final String EXTRA_TASK_BUNDLE = "task_bundle";
 
 
-  /** Delegate executor. */
-  private static Executor delegateExecutor;
+  /** Goro instance used by the service. */
+  private static Goro goro;
 
   /** Errors thrower. */
   private static final ErrorThrow ERROR_THROWER = new ErrorThrow();
@@ -71,12 +71,24 @@ public class GoroService extends Service {
   /** Stop handler. */
   private final StopHandler stopHandler = new StopHandler(this);
 
-  /**
-   * Set an executor instance that is used to actually perform tasks.
-   * @param delegateExecutor executor instance
+  /***
+   * Initialize GoroService which will allow you to use {@code Goro.bindXXX} methods.
+   * @param context context instance used to enable GoroService component
+   * @param goro instance of Goro that should be used by the service
    */
-  public static void setDelegateExecutor(final Executor delegateExecutor) {
-    GoroService.delegateExecutor = delegateExecutor;
+  public static void setup(final Context context, final Goro goro) {
+    if (goro == null) {
+      throw new IllegalArgumentException("Goro instance cannot be null");
+    }
+    if (!Util.checkMainThread()) {
+      throw new IllegalStateException("GoroService.setup must be called on the main thread");
+    }
+    GoroService.goro = goro;
+    context.getPackageManager().setComponentEnabledSetting(
+        new ComponentName(context, GoroService.class),
+        COMPONENT_ENABLED_STATE_ENABLED,
+        DONT_KILL_APP
+    );
   }
 
   /**
@@ -174,7 +186,10 @@ public class GoroService extends Service {
             + "This might happen if you invoke GoroService.getGoro() not from the main thread."
         );
       }
-      binder = new GoroBinderImpl(createGoro(), new GoroTasksListener());
+      if (goro == null) {
+        throw new IllegalStateException("GoroService is not initialized. Call GoroService.setup");
+      }
+      binder = new GoroBinderImpl(goro, new GoroTasksListener());
     }
     return binder;
   }
@@ -245,10 +260,6 @@ public class GoroService extends Service {
    */
   public Goro getGoro() {
     return getBinder().goro();
-  }
-
-  protected Goro createGoro() {
-    return delegateExecutor != null ? createWithDelegate(delegateExecutor) : create();
   }
 
   /** Returns a Goro instance. */

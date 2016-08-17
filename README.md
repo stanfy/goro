@@ -94,6 +94,16 @@ Otherwise you'll need to insert the following line into your `AndroidManifest.xm
 The service creates a `Goro` instance when it's created. To interact with this instance you'll need
 to bind to the service. Use `BoundGoro` for this:
 ```java
+public class MyApplciation extends Applciation {
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    Goro goro = Goro.create();
+    GoroService.setup(this, goro);
+  }
+
+}
 
 public class MyActivity extends Activity {
 

@@ -24,6 +24,8 @@ import java.util.concurrent.Callable;
  */
 public class GoroActivity extends Activity {
 
+  private static final Goro GORO = Goro.create();
+
   /** REST API queue. */
   private static final String QUEUE_REST = "rest";
 
@@ -42,6 +44,8 @@ public class GoroActivity extends Activity {
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.goro);
+
+    GoroService.setup(this, GORO);
 
     if (savedInstanceState != null) {
       counter = savedInstanceState.getInt("counter");

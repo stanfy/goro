@@ -45,15 +45,15 @@ public class TapeHandler implements Callable<Void>, Parcelable, ServiceContextAw
     // hide the constructor
   }
 
-  public static TapeHandler create(final Context context, final Goro goro) {
+  public static TapeHandler create(final Context context) {
     TapeHandler handler = new TapeHandler();
-    handler.inject(context, new QueueHandlerModule(context.getApplicationContext(), goro));
+    handler.inject(context, new QueueHandlerModule(context.getApplicationContext()));
     return handler;
   }
 
   @Override
   public void injectServiceContext(final Context context) {
-    inject(context, new QueueHandlerModule(context, ((GoroService) context).getGoro()));
+    inject(context, new QueueHandlerModule(context));
   }
 
   private void inject(final Context context, final Object module) {

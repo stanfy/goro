@@ -19,21 +19,14 @@ import dagger.Provides;
 class QueueHandlerModule {
 
   private final Context context;
-  private final Goro goro;
 
-  QueueHandlerModule(final Context context, final Goro goro) {
+  QueueHandlerModule(final Context context) {
     this.context = context;
-    this.goro = goro;
   }
 
   @Provides @Singleton
   Context context() {
     return context;
-  }
-
-  @Provides @Singleton
-  Goro goro() {
-    return goro;
   }
 
 }

@@ -42,12 +42,8 @@ public class GoroServiceTest {
   @Before
   public void init() {
     queues = new TestingQueues();
-    service = new GoroService() {
-      @Override
-      protected Goro createGoro() {
-        return new Goro.GoroImpl(queues);
-      }
-    };
+    GoroService.setup(application, new Goro.GoroImpl(queues));
+    service = new GoroService();
     service.onCreate();
 
     task = new Task(new Callable<String>() {

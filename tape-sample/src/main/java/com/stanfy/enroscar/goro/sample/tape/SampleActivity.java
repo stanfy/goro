@@ -48,7 +48,7 @@ public class SampleActivity extends FragmentActivity {
           @Override
           public void act(String token) {
             Toast.makeText(getApplicationContext(), "Task " + token + " is scheduled", Toast.LENGTH_SHORT).show();
-            goro.schedule(TapeHandler.create(getApplicationContext(), goro));
+            goro.schedule(TapeHandler.create(getApplicationContext()));
           }
         })
         .doOnError(new Action<Throwable>() {
