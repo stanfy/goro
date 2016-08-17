@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.stanfy.android.apt'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
   compileSdkVersion project.androidCompileSdkVersion
@@ -31,8 +31,8 @@ dependencies {
 
   compile project(':goro')
   compile 'com.stanfy.enroscar:enroscar-async:2.0-RC1'
-  provided 'com.stanfy.enroscar:enroscar-async-compiler:2.0-RC1'
+  apt 'com.stanfy.enroscar:enroscar-async-compiler:2.0-RC1'
 
   compile 'com.squareup.dagger:dagger:1.2.2'
-  provided 'com.squareup.dagger:dagger-compiler:1.2.2'
+  apt 'com.squareup.dagger:dagger-compiler:1.2.2'
 }

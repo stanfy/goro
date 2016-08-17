@@ -16,6 +16,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
+import org.robolectric.shadows.ShadowApplication;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -50,7 +51,7 @@ public abstract class BaseBindingGoroTest {
     serviceCompName = new ComponentName(context, GoroService.class);
     GoroService service = new GoroService();
     binder = new GoroService.GoroBinderImpl(serviceInstance, service.new GoroTasksListener());
-    shadowContext.getShadowApplication()
+    ShadowApplication.getInstance()
         .setComponentNameAndServiceForBindService(
             serviceCompName,
             binder
