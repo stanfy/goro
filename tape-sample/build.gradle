@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
   compile 'com.squareup:tape:1.2.3'
-  compile 'com.google.code.gson:gson:2.3'
+  compile 'com.google.code.gson:gson:2.4'
 
   compile project(':goro')
   compile 'com.stanfy.enroscar:enroscar-async:2.0-RC1'
