@@ -38,7 +38,7 @@ dependencies {
 
   testCompile 'junit:junit:4.12'
   testCompile testDeps
-  testCompile 'org.robolectric:robolectric:3.1'
+  testCompile 'org.robolectric:robolectric:3.1.2'
 
   androidTestCompile testDeps
   androidTestCompile 'io.reactivex:rxjava:1.0.13'
