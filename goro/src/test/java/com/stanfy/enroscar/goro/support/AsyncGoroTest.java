@@ -11,7 +11,7 @@ import com.stanfy.enroscar.goro.ObservableFuture;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.concurrent.Callable;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 /**
  * Tests for AsyncGoro.
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
 public class AsyncGoroTest {
 

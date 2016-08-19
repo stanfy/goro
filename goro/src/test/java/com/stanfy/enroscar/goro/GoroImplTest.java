@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.concurrent.Callable;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 /**
  * Tests for {@link com.stanfy.enroscar.goro.Goro.GoroImpl}.
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
 public class GoroImplTest {
 
@@ -35,12 +35,16 @@ public class GoroImplTest {
   /** Testing queues. */
   private TestingQueues testingQueues;
 
+  public static GoroImpl createGoroWith(TestingQueues queues) {
+    return new GoroImpl(queues);
+  }
+
   @Before
   public void createGoro() {
     testingQueues = new TestingQueues();
     // this is not public API, yet the simplest way to get an instance
     // and it suits our test needs
-    goro = new GoroImpl(testingQueues);
+    goro = createGoroWith(testingQueues);
     listener = mock(GoroListener.class);
   }
 

@@ -4,6 +4,8 @@ import android.annotation.TargetApi;
 import android.app.Application;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.test.ApplicationTestCase;
 
 import java.util.concurrent.Callable;
@@ -25,7 +27,12 @@ public class OnDemandBindingGoroAndroidTest extends ApplicationTestCase<Applicat
   protected void setUp() throws Exception {
     super.setUp();
     createApplication();
-    GoroService.setDelegateExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    new Handler(Looper.getMainLooper()).post(new Runnable() {
+      @Override
+      public void run() {
+        GoroService.setup(getContext(), Goro.createWithDelegate(AsyncTask.THREAD_POOL_EXECUTOR));
+      }
+    });
     this.goro = (OnDemandBindingGoro) Goro.bindOnDemandWith(getApplication());
   }
 
