@@ -74,12 +74,12 @@ public class GoroServiceAndroidTest extends ServiceTestCase<GoroService> {
     Log.i("GoroTest", "SET UP");
     mockTask = new MockTask();
     executor.commands.clear();
-    GoroService.setDelegateExecutor(executor);
 
     final CountDownLatch bindSyc = new CountDownLatch(1);
     onMainThread(new Runnable() {
       @Override
       public void run() {
+        GoroService.setup(getContext(), Goro.createWithDelegate(executor));
         Log.i("GoroTest", "BINDING...");
         goro = Goro.from(bindService(new Intent()));
         assertThat(goro).isNotNull();

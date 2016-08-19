@@ -122,13 +122,26 @@ public class RxGoro {
           futures.add(future);
         }
 
+        future.subscribe(new FutureObserver<Void>() {
+          @Override
+          public void onSuccess(Void value) {
+            synchronized (futures) {
+              futures.remove(future);
+            }
+          }
+
+          @Override
+          public void onError(Throwable error) {
+            synchronized (futures) {
+              futures.remove(future);
+            }
+          }
+        });
+
         return new Subscription() {
           @Override
           public void unsubscribe() {
             future.cancel(true);
-            synchronized (futures) {
-              futures.remove(future);
-            }
           }
 
           @Override
