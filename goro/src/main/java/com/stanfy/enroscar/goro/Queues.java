@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Build;
 
-import java.util.HashMap;
+import java.io.PrintWriter;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -36,6 +38,8 @@ interface Queues {
    */
   void clear(String queueName);
 
+  void dump(PrintWriter out);
+
   /** Default implementation. */
   class Impl implements Queues {
 
@@ -49,7 +53,7 @@ interface Queues {
     private static Executor defaultThreadPoolExecutor;
 
     /** Executors map. */
-    private final HashMap<String, TaskQueueExecutor> executorsMap = new HashMap<>();
+    private final LinkedHashMap<String, TaskQueueExecutor> executorsMap = new LinkedHashMap<>();
 
     /** Used threads pool. */
     private Executor delegateExecutor;
@@ -125,6 +129,41 @@ interface Queues {
         exec.clear();
       }
     }
+
+    private static final char[] SPACES = new char[] {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+
+    private static String trim(String in) {
+      if (in.length() == SPACES.length) {
+        return in;
+      }
+      if (in.length() < SPACES.length) {
+        return in.concat(String.valueOf(SPACES, 0, SPACES.length - in.length()));
+      }
+      return in.substring(0, SPACES.length - 3) + "...";
+    }
+
+    @Override
+    public void dump(PrintWriter out) {
+      //          |   -10-    |    -10-    |      ...
+      out.println("   name    | processing | line                 ");
+      out.println("------------------------------------------------");
+      synchronized (executorsMap) {
+        if (executorsMap.isEmpty()) {
+          out.println("<empty>");
+          return;
+        }
+        for (Map.Entry<String, TaskQueueExecutor> entry : executorsMap.entrySet()) {
+          String name = trim(entry.getKey());
+          Runnable activeTask = entry.getValue().activeTask;
+          String processing = activeTask != null ? trim((activeTask.toString())) : trim("");
+          out.print(name);
+          out.print(" | ");
+          out.print(processing);
+          out.print(" | ");
+          out.println(entry.getValue().lineString());
+        }
+      }
+    }
   }
 
   /** Executor for the task queue. */
@@ -167,6 +206,17 @@ interface Queues {
 
     synchronized void clear() {
       tasks.clear();
+    }
+
+    synchronized String lineString() {
+      if (tasks.isEmpty()) {
+        return "";
+      }
+      StringBuilder result = new StringBuilder();
+      for (Runnable task : tasks) {
+        result.append(task).append(" <- ");
+      }
+      return result.delete(result.length() - 4, result.length()).toString();
     }
   }
 

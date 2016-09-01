@@ -3,6 +3,7 @@ package com.stanfy.enroscar.goro;
 import android.content.Context;
 import android.os.IBinder;
 
+import java.io.PrintWriter;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
@@ -165,6 +166,9 @@ public abstract class Goro {
 
   protected abstract void removeTasksInQueue(final String queueName);
 
+  /** Print state of Goro queues for debugging purposes. */
+  public abstract void dump(PrintWriter out);
+
   /** Main implementation. */
   static class GoroImpl extends Goro {
     /** Listeners handler. */
@@ -216,6 +220,11 @@ public abstract class Goro {
     @Override
     protected void removeTasksInQueue(final String queueName) {
       queues.clear(queueName);
+    }
+
+    @Override
+    public void dump(PrintWriter out) {
+      queues.dump(out);
     }
   }
 

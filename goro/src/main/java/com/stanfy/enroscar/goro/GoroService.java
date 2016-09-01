@@ -13,6 +13,8 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.util.Log;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Callable;
 
@@ -260,6 +262,11 @@ public class GoroService extends Service {
    */
   public Goro getGoro() {
     return getBinder().goro();
+  }
+
+  @Override
+  protected void dump(FileDescriptor fd, PrintWriter writer, String[] args) {
+    getGoro().dump(writer);
   }
 
   /** Returns a Goro instance. */
