@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply from: file("$rootDir/gradle/android-maven.gradle")
 
 group = 'com.stanfy.enroscar'
-version = '3.0.0-SNAPSHOT'
+version = '3.0.0-RC2'
 
 android {
   compileSdkVersion project.androidCompileSdkVersion
