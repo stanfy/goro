@@ -1,5 +1,7 @@
 package com.stanfy.enroscar.goro;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
@@ -16,6 +18,8 @@ import static com.stanfy.enroscar.goro.Util.checkMainThread;
  */
 abstract class BufferedGoroDelegate extends Goro {
 
+  private static final boolean DEBUG = false;
+
   /** Delegate instance. */
   private Goro delegate;
 
@@ -30,6 +34,9 @@ abstract class BufferedGoroDelegate extends Goro {
 
   protected boolean updateDelegate(final Goro delegate) {
     synchronized (lock) {
+      if (DEBUG) {
+        Log.v("Goro", "updateDelegate(" + delegate + ") " + this, new Throwable());
+      }
       if (this.delegate != delegate) {
         if (this.delegate != null && delegate != null) {
           throw new GoroException("Got a new delegate " + delegate

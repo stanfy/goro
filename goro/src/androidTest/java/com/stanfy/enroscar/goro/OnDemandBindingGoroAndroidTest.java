@@ -2,6 +2,7 @@ package com.stanfy.enroscar.goro;
 
 import android.annotation.TargetApi;
 import android.app.Application;
+import android.app.Instrumentation;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -61,6 +62,7 @@ public class OnDemandBindingGoroAndroidTest extends ApplicationTestCase<Applicat
         });
     assertThat(sync.await(2, TimeUnit.SECONDS)).describedAs("Operation timed out").isTrue();
     assertThat(result).containsOnly("done");
+    waitMainThread();
     assertThat(goro.delegate()).describedAs("Service must be unbound").isNull();
   }
 
@@ -74,7 +76,19 @@ public class OnDemandBindingGoroAndroidTest extends ApplicationTestCase<Applicat
     };
     goro.getExecutor("test").execute(task);
     assertThat(sync.await(2, TimeUnit.SECONDS)).describedAs("Operation timed out").isTrue();
+    waitMainThread();
     assertThat(goro.delegate()).describedAs("Service must be unbound").isNull();
+  }
+
+  private void waitMainThread() throws InterruptedException {
+    final CountDownLatch sync = new CountDownLatch(1);
+    new Handler(Looper.getMainLooper()).post(new Runnable() {
+      @Override
+      public void run() {
+        sync.countDown();
+      }
+    });
+    assertThat(sync.await(10, TimeUnit.SECONDS)).isTrue();
   }
 
 }

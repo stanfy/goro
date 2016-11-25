@@ -4,6 +4,9 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 
 import org.junit.Test;
+import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
@@ -13,6 +16,7 @@ import java.util.concurrent.TimeoutException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static org.robolectric.RuntimeEnvironment.application;
 
 /**
  * Tests for BoundGoro.
@@ -143,6 +147,25 @@ public class BoundGoroTest extends BaseBindingGoroTest {
     ObservableFuture<?> future = mock(ObservableFuture.class);
     doReturn(future).when(serviceInstance).schedule("2", task);
     assertThat((Object) goro.schedule("2", task)).isSameAs(future);
+  }
+
+  @Test
+  public void unbind() {
+    assertThat(Shadows.shadowOf(application).getUnboundServiceConnections()).isEmpty();
+    goro.bind();
+    assertBinding();
+    goro.unbind();
+    assertThat(Shadows.shadowOf(application).getUnboundServiceConnections()).hasSize(1);
+  }
+
+  @Test
+  public void unbindAfterConnectionIfRequested() {
+    assertThat(Shadows.shadowOf(application).getUnboundServiceConnections()).isEmpty();
+    Robolectric.getForegroundThreadScheduler().pause();
+    goro.bind();
+    goro.unbind();
+    Robolectric.getForegroundThreadScheduler().unPause();
+    assertThat(Shadows.shadowOf(application).getUnboundServiceConnections()).hasSize(1);
   }
 
 }
