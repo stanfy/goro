@@ -32,6 +32,9 @@ public abstract class BoundGoro extends BufferedGoroDelegate {
     /** Disconnection handler. */
     private final OnUnexpectedDisconnection disconnectionHandler;
 
+    // Modified in the main thread only.
+    private boolean unbindRequested;
+
     BoundGoroImpl(final Context context, final OnUnexpectedDisconnection disconnectionHandler) {
       this.context = context;
       this.disconnectionHandler = disconnectionHandler;
@@ -39,6 +42,7 @@ public abstract class BoundGoro extends BufferedGoroDelegate {
 
     @Override
     public void bind() {
+      unbindRequested = false;
       GoroService.bind(context, this);
     }
 
@@ -46,12 +50,19 @@ public abstract class BoundGoro extends BufferedGoroDelegate {
     public void unbind() {
       if (updateDelegate(null)) {
         GoroService.unbind(context, this);
+        unbindRequested = false;
+      } else {
+        unbindRequested = true;
       }
     }
 
     @Override
     public void onServiceConnected(final ComponentName name, final IBinder binder) {
       updateDelegate(Goro.from(binder));
+      if (unbindRequested) {
+        // If unbind is requested before we get a real connection, unbind here, after delegating all buffered calls.
+        unbind();
+      }
     }
 
     @Override
