@@ -5,7 +5,9 @@ android:
   - tools
   - platform-tools
   - build-tools-24.0.3
+  - build-tools-27.0.3
   - android-24
+  - android-27
   - extra-android-m2repository
   - sys-img-armeabi-v7a-android-24
 
