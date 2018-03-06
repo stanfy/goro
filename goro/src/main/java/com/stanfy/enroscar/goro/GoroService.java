@@ -1,5 +1,6 @@
 package com.stanfy.enroscar.goro;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,6 +29,8 @@ public class GoroService extends Service {
 
   private static final String TAG = "Goro";
 
+  private static final int DEFAULT_NOTIFICATION_ID = 1;
+
   /**
    * Used as a {@link java.lang.String} field in service command intent to pass
    * a queue name. If this extra is not defined, {@link Goro#DEFAULT_QUEUE} is used.
@@ -53,6 +56,23 @@ public class GoroService extends Service {
    * Used as a workaround for http://code.google.com/p/android/issues/detail?id=6822
    */
   static final String EXTRA_TASK_BUNDLE = "task_bundle";
+
+  /**
+   * Used as a <b>int</b> field in service command intent to pass
+   * a Notification ID to run service in the foreground.
+   */
+  static final String EXTRA_NOTIFICATION_ID = "notification_ID";
+
+  /**
+   * Used as a {@link android.os.Parcelable} field in service command intent to pass
+   * a Notification to run service in the foreground.
+   */
+  static final String EXTRA_NOTIFICATION = "notification";
+
+  /**
+   * Used as a workaround for http://code.google.com/p/android/issues/detail?id=6822
+   */
+  static final String EXTRA_NOTIFICATION_BUNDLE = "notification_bundle";
 
 
   /** Goro instance used by the service. */
@@ -89,6 +109,59 @@ public class GoroService extends Service {
         COMPONENT_ENABLED_STATE_ENABLED,
         DONT_KILL_APP
     );
+  }
+
+  /**
+   * Create an intent that contains a task that should be scheduled
+   * on a defined queue. The Service will run in the foreground and display notification.
+   * Intent can be used as an argument for
+   * {@link android.content.Context#startService(android.content.Intent)}
+   * or {@link android.content.Context#startForegroundService(Intent)}
+   *
+   * @param context context instance
+   * @param task task instance
+   * @param queueName queue name
+   * @param <T> task type
+   * @param notificationId id of notification for foreground Service, should be not 0
+   * @param notification notification for foreground Service,
+   *                     should be not null to start service in the foreground
+   */
+  public static <T extends Callable<?> & Parcelable> Intent foregroundTaskIntent(final Context context,
+                                                                                 final String queueName,
+                                                                                 final T task,
+                                                                                 final int notificationId,
+                                                                                 final Notification notification) {
+    // XXX http://code.google.com/p/android/issues/detail?id=6822
+    Bundle taskBundle = new Bundle();
+    taskBundle.putParcelable(EXTRA_TASK, task);
+    Bundle notificationBundle = new Bundle();
+    notificationBundle.putParcelable(EXTRA_NOTIFICATION, notification);
+    return new Intent(context, GoroService.class)
+        .putExtra(EXTRA_TASK_BUNDLE, taskBundle)
+        .putExtra(EXTRA_NOTIFICATION_BUNDLE, notificationBundle)
+        .putExtra(EXTRA_QUEUE_NAME, queueName)
+        .putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+  }
+
+  /**
+   * Create an intent that contains a task that should be scheduled
+   * on a defined queue. The Service will run in the foreground and display notification.
+   * Intent can be used as an argument for
+   * {@link android.content.Context#startService(android.content.Intent)}
+   * or {@link android.content.Context#startForegroundService(Intent)}
+   *
+   * @param context context instance
+   * @param task task instance
+   * @param <T> task type
+   * @param notificationId id of notification for foreground Service, should be not 0
+   * @param notification notification for foreground Service,
+   *                     should be not null to start service in the foreground
+   */
+  public static <T extends Callable<?> & Parcelable> Intent foregroundTaskIntent(final Context context,
+                                                                                 final T task,
+                                                                                 final int notificationId,
+                                                                                 final Notification notification) {
+    return foregroundTaskIntent(context, Goro.DEFAULT_QUEUE, task, notificationId, notification);
   }
 
   /**
@@ -214,6 +287,17 @@ public class GoroService extends Service {
         ObservableFuture<?> future = getBinder().goro.schedule(queueName, task);
         if (!intent.getBooleanExtra(EXTRA_IGNORE_ERROR, false)) {
           ensureErrorWillBeThrown(future);
+        }
+      }
+
+      if (intent.hasExtra(EXTRA_NOTIFICATION_BUNDLE)) {
+        Bundle bundle = intent.getBundleExtra(EXTRA_NOTIFICATION_BUNDLE);
+        if (bundle != null) {
+          Notification notification = bundle.getParcelable(EXTRA_NOTIFICATION);
+          int notificationId = bundle.getInt(EXTRA_NOTIFICATION_ID, DEFAULT_NOTIFICATION_ID);
+          if (notification != null) {
+            startForeground(notificationId, notification);
+          }
         }
       }
     }

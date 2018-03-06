@@ -9,9 +9,9 @@ buildscript {
 }
 
 ext {
-  androidCompileSdkVersion = 23
-  androidBuildToolsVersion = '23.0.3'
-  androidTargetSdkVersion = 23
+  androidCompileSdkVersion = 27
+  androidBuildToolsVersion = '27.0.3'
+  androidTargetSdkVersion = 27
 }
 
 subprojects {
