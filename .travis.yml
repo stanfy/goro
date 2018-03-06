@@ -4,12 +4,11 @@ android:
   components:
   - tools
   - platform-tools
-  - build-tools-24.0.3
   - build-tools-27.0.3
-  - android-24
+  - android-22
   - android-27
   - extra-android-m2repository
-  - sys-img-armeabi-v7a-android-24
+  - sys-img-armeabi-v7a-android-22
 
 jdk:
   - oraclejdk8
@@ -18,13 +17,13 @@ install:
   - ./gradlew clean assemble
 
 before_script:
-  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
 
 script:
   - ./gradlew --continue check
   - android-wait-for-emulator
-  - adb shell input keyevent 82
+  - adb shell input keyevent 82 &
   - ./gradlew conCheck
 
 after_success:
@@ -35,9 +34,14 @@ notifications:
 
 sudo: false
 
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-  - "$HOME/.gradle"
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
 
 env:
   global:
