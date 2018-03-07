@@ -29,8 +29,6 @@ public class GoroService extends Service {
 
   private static final String TAG = "Goro";
 
-  private static final int DEFAULT_NOTIFICATION_ID = 1;
-
   /**
    * Used as a {@link java.lang.String} field in service command intent to pass
    * a queue name. If this extra is not defined, {@link Goro#DEFAULT_QUEUE} is used.
@@ -122,7 +120,7 @@ public class GoroService extends Service {
    * @param task task instance
    * @param queueName queue name
    * @param <T> task type
-   * @param notificationId id of notification for foreground Service, should be not 0
+   * @param notificationId id of notification for foreground Service, must not be 0
    * @param notification notification for foreground Service,
    *                     should be not null to start service in the foreground
    */
@@ -155,7 +153,7 @@ public class GoroService extends Service {
    * @param context context instance
    * @param task task instance
    * @param <T> task type
-   * @param notificationId id of notification for foreground Service, should be not 0
+   * @param notificationId id of notification for foreground Service, must not be 0
    * @param notification notification for foreground Service,
    *                     should be not null to start service in the foreground
    */
@@ -296,7 +294,7 @@ public class GoroService extends Service {
         Bundle bundle = intent.getBundleExtra(EXTRA_NOTIFICATION_BUNDLE);
         if (bundle != null) {
           Notification notification = bundle.getParcelable(EXTRA_NOTIFICATION);
-          int notificationId = bundle.getInt(EXTRA_NOTIFICATION_ID, DEFAULT_NOTIFICATION_ID);
+          int notificationId = bundle.getInt(EXTRA_NOTIFICATION_ID);
           if (notification != null) {
             startForeground(notificationId, notification);
           }
