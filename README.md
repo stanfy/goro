@@ -145,6 +145,16 @@ instance. Yet this instance must also implement `Parcelable` to be able to be pa
   context.startService(GoroService.taskIntent(context, "notDefaultQueue", myTask2));
 ```
 
+`GoroService` can be run in the foreground
+(to support background execution in android 8 https://developer.android.com/about/versions/oreo/android-8.0-changes.html#back-all):
+
+```java
+  Intent intent = GoroService.foregroundTaskIntent(context, myTask, notificationId, notification);
+  ContextCompat.startForegroundService(intent);
+  Intent intent2 = GoroService.foregroundTaskIntent(context, "notDefaultQueue", myTask2, notificationId, notification);
+  ContextCompat.startForegroundService(intent2);
+```
+
 Intent constructed with `GoroService.taskIntent` can also be used to obtain a `PendingIntent`
 and schedule task execution with `AlarmManager` or `Notification`:
 ```java

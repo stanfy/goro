@@ -4,3 +4,8 @@ local.properties
 # Gradle
 build
 .gradle
+
+# IDEA
+out
+.idea
+*.iml
