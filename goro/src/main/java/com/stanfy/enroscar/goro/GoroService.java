@@ -131,6 +131,8 @@ public class GoroService extends Service {
                                                                                  final T task,
                                                                                  final int notificationId,
                                                                                  final Notification notification) {
+    // It may produce ClassNotFoundException when using custom Parcelable (for example via an AlarmManager).
+    // As a workaround pack a Parcelable into an additional Bundle, then put that Bundle into Intent.
     // XXX http://code.google.com/p/android/issues/detail?id=6822
     Bundle taskBundle = new Bundle();
     taskBundle.putParcelable(EXTRA_TASK, task);
