@@ -9,3 +9,7 @@ build
 out
 .idea
 *.iml
+
+# OS junk
+.DS_Store
+*~
