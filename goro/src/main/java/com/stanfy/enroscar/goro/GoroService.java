@@ -294,7 +294,7 @@ public class GoroService extends Service {
         Bundle bundle = intent.getBundleExtra(EXTRA_NOTIFICATION_BUNDLE);
         if (bundle != null) {
           Notification notification = bundle.getParcelable(EXTRA_NOTIFICATION);
-          int notificationId = bundle.getInt(EXTRA_NOTIFICATION_ID);
+          int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, 0);
           if (notification != null) {
             startForeground(notificationId, notification);
           }
