@@ -14,6 +14,12 @@ android:
 jdk:
   - oraclejdk8
 
+# It seems Google uploaded a new version of the android-27 package 
+# and the checksum is now different and the download fails.
+# https://github.com/travis-ci/travis-ci/issues/8874
+before_install:
+- yes | sdkmanager "platforms;android-27"
+
 install:
   - ./gradlew clean assemble
 
